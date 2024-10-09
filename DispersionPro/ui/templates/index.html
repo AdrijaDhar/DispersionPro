@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DispersionPro</title>
+</head>
+<body>
+    <h1>DispersionPro Visualization</h1>
+    <form action="/visualize" method="POST">
+        <label for="Q">Emission Rate (g/s):</label>
+        <input type="text" id="Q" name="Q">
+        <br><br>
+        <label for="u">Wind Speed (m/s):</label>
+        <input type="text" id="u" name="u">
+        <br><br>
+        <label for="H">Stack Height (m):</label>
+        <input type="text" id="H" name="H">
+        <br><br>
+        <button type="submit">Generate Visualization</button>
+    </form>
+</body>
+</html>
