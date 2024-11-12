@@ -1,0 +1,11 @@
+test_name: PasquillGiffordTest1
+Qm: 5.0
+u: 1.8
+model_type: pasquill
+x_max: 180.0
+y_max: 90.0
+z: 1.0
+additional_inputs: {'stability_class': 'B', 'toxicity_threshold': 0.4}
+modify_terrain: False
+adjust_for_weather: True
+visualize_toxicity: True

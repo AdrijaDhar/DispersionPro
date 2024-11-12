@@ -1,12 +1,11 @@
-# config/config.yaml
+# config/congif.yml
 
-app:
-  secret_key: 'your_secret_key_here'
-  debug: True
-
-api:
-  keys:
-    - 'your_api_key_here'
-
-weather_api:
-  key: 'your_openweathermap_api_key_here'
+defaults:
+  Qm: 1.0
+  K: 0.1
+  wind_speed: 5.0
+  toxicity_threshold: 0.5
+visualization:
+  contour_levels: 20
+  colormap: "viridis"
+  plot_title: "Dispersion Simulation"

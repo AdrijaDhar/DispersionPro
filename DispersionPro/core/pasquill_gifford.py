@@ -1,34 +1,13 @@
-def pasquill_gifford_class(stability_class, distance):
-    """
-    Calculate the horizontal and vertical dispersion coefficients using the Pasquill-Gifford method.
+# core/pasquill_gifford.py
 
-    Parameters:
-    stability_class : str - Stability class (A, B, C, D, E, F)
-    distance : float - Distance from the source (m)
+import numpy as np
 
-    Returns:
-    sigma_y : float - Horizontal dispersion coefficient (m)
-    sigma_z : float - Vertical dispersion coefficient (m)
-    """
-    if stability_class == 'A':
-        sigma_y = 0.22 * distance * (1 + 0.0001 * distance) ** -0.5
-        sigma_z = 0.2 * distance
-    elif stability_class == 'B':
-        sigma_y = 0.16 * distance * (1 + 0.0001 * distance) ** -0.5
-        sigma_z = 0.12 * distance
-    elif stability_class == 'C':
-        sigma_y = 0.11 * distance * (1 + 0.0001 * distance) ** -0.5
-        sigma_z = 0.08 * distance
-    elif stability_class == 'D':
-        sigma_y = 0.08 * distance * (1 + 0.0001 * distance) ** -0.5
-        sigma_z = 0.06 * distance
-    elif stability_class == 'E':
-        sigma_y = 0.06 * distance * (1 + 0.0001 * distance) ** -0.5
-        sigma_z = 0.03 * distance
-    elif stability_class == 'F':
-        sigma_y = 0.04 * distance * (1 + 0.0001 * distance) ** -0.5
-        sigma_z = 0.016 * distance
-    else:
-        raise ValueError(f"Unknown stability class: {stability_class}")
-    
-    return sigma_y, sigma_z
+class PasquillGiffordModel:
+    @staticmethod
+    def pasquill_gifford_concentration(Qm, u, x, y, z, stability_class):
+        """Pasquill-Gifford Model with dispersion coefficients"""
+        stability_factors = {'A': 1.0, 'B': 0.9, 'C': 0.8, 'D': 0.7, 'E': 0.6, 'F': 0.5}
+        factor = stability_factors.get(stability_class, 1.0)
+        sigma_y = factor * 0.1 * x  # Dispersion coefficient example
+        sigma_z = factor * 0.05 * x
+        return (Qm / (u * sigma_y * sigma_z)) * np.exp(-0.5 * ((y**2 / sigma_y**2) + (z**2 / sigma_z**2)))

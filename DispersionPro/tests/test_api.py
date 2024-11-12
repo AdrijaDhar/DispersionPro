@@ -1,27 +1,16 @@
+# tests/test_api.py
+
 import unittest
-import json
-from DispersionPro.api.api_endpoints import app
+import requests
 
 class TestAPI(unittest.TestCase):
-    def setUp(self):
-        self.app = app.test_client()
-        self.app.testing = True
+    BASE_URL = "http://localhost:5000"  # Change to actual API endpoint
 
-    def test_gaussian_plume(self):
-        payload = {
-            'Q': 100,
-            'u': 5,
-            'x': 100,
-            'y': 0,
-            'z': 0,
-            'H': 50,
-            'sigma_y': 30,
-            'sigma_z': 10
-        }
-        response = self.app.post('/api/gaussian_plume', data=json.dumps(payload), content_type='application/json')
+    def test_dispersion_endpoint(self):
+        response = requests.get(f"{self.BASE_URL}/dispersion", params={'Qm': 1.0, 'K': 0.1, 'r': 10})
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.data)
-        self.assertAlmostEqual(data['concentration'], 0.01792, places=5)
+        data = response.json()
+        self.assertIn("concentration", data)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

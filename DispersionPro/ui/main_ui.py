@@ -1,39 +1,33 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QLineEdit
-from DispersionPro.visualizations.contour_plots import generate_contour_plot
+# ui/main_ui.py
 
-class DispersionProApp(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.initUI()
+from core.edge_case_handler import EdgeCaseHandler
+from ui.results_display import display_results
+import numpy as np
 
-    def initUI(self):
-        layout = QVBoxLayout()
-        self.setWindowTitle('DispersionPro')
+def main():
+    # Collect basic inputs
+    input_data = {
+        'Qm': float(input("Enter mass release rate (Qm): ")),
+        'K': float(input("Enter eddy diffusivity (K): ")),
+        'r': float(input("Enter distance from source (r): ")),
+        'wind': float(input("Enter wind speed (0 for no wind): ")),
+        'continuous': input("Is it a continuous release? (yes/no): ").lower() == 'yes',
+        'puff': input("Is it a puff release? (yes/no): ").lower() == 'yes',
+        't': float(input("Enter time since release (for non-steady states): ")),
+        'toxicity_threshold': float(input("Enter toxicity threshold: ")),
+        'wind_direction': float(input("Enter wind direction (in degrees): "))
+    }
 
-        self.q_input = QLineEdit(self)
-        self.q_input.setPlaceholderText('Emission rate (g/s)')
-        layout.addWidget(QLabel('Emission Rate (g/s):'))
-        layout.addWidget(self.q_input)
+    # Determine model and calculate concentration
+    handler = EdgeCaseHandler()
+    concentration = handler.select_model(input_data)
 
-        self.u_input = QLineEdit(self)
-        self.u_input.setPlaceholderText('Wind speed (m/s)')
-        layout.addWidget(QLabel('Wind Speed (m/s):'))
-        layout.addWidget(self.u_input)
+    # Generate sample concentration data grid for visualization
+    concentration_data = np.full((100, 100), concentration)  # Simplified example
+    terrain_data = np.random.rand(100, 100) * 10  # Random terrain elevation data for example
 
-        self.visualize_button = QPushButton('Generate Visualization', self)
-        self.visualize_button.clicked.connect(self.visualize_dispersion)
-        layout.addWidget(self.visualize_button)
+    # Display results based on user's choice of visualization
+    display_results(concentration_data, terrain_data, input_data['toxicity_threshold'], input_data['wind'], input_data['wind_direction'])
 
-        self.setLayout(layout)
-
-    def visualize_dispersion(self):
-        q = float(self.q_input.text())
-        u = float(self.u_input.text())
-
-        generate_contour_plot(Q=q, u=u, H=50, x_range=500, y_range=100, sigma_y=30, sigma_z=10)
-
-if __name__ == '__main__':
-    app = QApplication([])
-    ex = DispersionProApp()
-    ex.show()
-    app.exec_()
+if __name__ == "__main__":
+    main()

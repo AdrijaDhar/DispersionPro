@@ -1,32 +1,37 @@
-from flask import Flask, render_template, request
-from DispersionPro.visualizations.contour_plots import generate_contour_plot
-import io
-import base64
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+# ui/app.py
 
-app = Flask(__name__)
+from core.edge_case_handler import EdgeCaseHandler
+from visualizations.contour_plots import generate_contour_plot
+import numpy as np
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+def main():
+    # Collect user input
+    input_data = {
+        'Qm': float(input("Enter mass release rate (Qm): ")),
+        'K': float(input("Enter eddy diffusivity (K): ")),
+        'r': float(input("Enter distance from source (r): ")),
+        'wind': float(input("Enter wind speed (0 for no wind): ")),
+        'continuous': input("Is it a continuous release? (yes/no): ").lower() == 'yes',
+        'puff': input("Is it a puff release? (yes/no): ").lower() == 'yes',
+        't': float(input("Enter time since release (for non-steady states): ")),
+        'x': float(input("Enter x-coordinate: ")),
+        'y': float(input("Enter y-coordinate: ")),
+        'z': float(input("Enter z-coordinate: ")),
+        'Kx': float(input("Enter eddy diffusivity in x direction (Kx): ")),
+        'Ky': float(input("Enter eddy diffusivity in y direction (Ky): ")),
+        'Kz': float(input("Enter eddy diffusivity in z direction (Kz): ")),
+    }
 
-@app.route('/visualize', methods=['POST'])
-def visualize():
-    # Get parameters from form
-    Q = float(request.form['Q'])
-    u = float(request.form['u'])
-    H = float(request.form['H'])
-    sigma_y = 30
-    sigma_z = 10
+    # Determine model and calculate concentration
+    handler = EdgeCaseHandler()
+    concentration = handler.select_model(input_data)
 
-    fig = generate_contour_plot(Q, u, H, 500, 100, sigma_y, sigma_z)
+    # Generate contour plot
+    x_vals = np.linspace(0, 100, 100)  # Example x-axis range
+    y_vals = np.linspace(0, 100, 100)  # Example y-axis range
+    data = np.array([[concentration for _ in x_vals] for _ in y_vals])  # Simplified data generation
 
-    # Convert plot to PNG image and display in web page
-    output = io.BytesIO()
-    FigureCanvas(fig).print_png(output)
-    plot_data = base64.b64encode(output.getvalue()).decode('utf8')
+    generate_contour_plot(data, x_vals, y_vals, title="Generated Concentration Contour")
 
-    return render_template('visualize.html', plot_data=plot_data)
-
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    main()

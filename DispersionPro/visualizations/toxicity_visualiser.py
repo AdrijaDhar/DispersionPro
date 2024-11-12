@@ -1,25 +1,18 @@
-# visualizations/toxicity_visualization.py
+# visualizations/toxicity_visualiser.py
 
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 
-def generate_toxicity_heatmap(concentration_grid, threshold):
+def toxicity_visualization(concentration_data, toxicity_threshold):
     """
-    Generates a heatmap highlighting areas where concentration exceeds the threshold.
-
+    Visualize areas where concentration exceeds toxicity threshold.
     Parameters:
-    concentration_grid: np.array - 2D array of concentration values.
-    threshold: float - Toxic concentration threshold.
-
-    Returns:
-    fig: matplotlib.figure.Figure - The generated heatmap figure.
+        concentration_data : np.array : Concentration data array
+        toxicity_threshold : float : Threshold concentration for toxicity
     """
-    exceedance = concentration_grid > threshold
-    plt.figure(figsize=(8, 6))
-    plt.imshow(exceedance, cmap='Reds', origin='lower')
-    plt.colorbar(label='Exceeds Threshold')
-    plt.title('Toxicity Threshold Exceedance Heatmap')
-    plt.xlabel('X Position')
-    plt.ylabel('Y Position')
-    fig = plt.gcf()
-    return fig
+    toxic_areas = concentration_data > toxicity_threshold
+
+    plt.imshow(toxic_areas, cmap='Reds', interpolation='nearest')
+    plt.colorbar(label="Toxicity")
+    plt.title("Toxic Areas")
+    plt.show()

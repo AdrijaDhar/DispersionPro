@@ -1,20 +1,19 @@
-# Use an official Python runtime as a parent image
-FROM python:3.8-slim
+# Dockerfile
+
+# Use an official Python runtime as a base image
+FROM python:3.9-slim
 
 # Set the working directory
 WORKDIR /app
 
-# Copy the current directory contents into the container
+# Copy the current directory contents into the container at /app
 COPY . /app
 
-# Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+# Install any necessary dependencies
+RUN pip install -r requirements.txt
 
-# Make port 5000 available to the world outside this container
+# Expose port for the API (assuming an API server is used)
 EXPOSE 5000
 
-# Define environment variable
-ENV FLASK_APP DispersionPro/api/api_endpoints.py
-
-# Run flask app
-CMD ["flask", "run", "--host=0.0.0.0"]
+# Run the application
+CMD ["python", "ui/app.py"]

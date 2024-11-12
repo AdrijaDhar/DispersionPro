@@ -1,28 +1,25 @@
 # scripts/data_cleanup.py
 
-import os
+import pandas as pd
 
-def clean_old_logs(log_dir, days_old):
+def clean_data(df):
     """
-    Deletes log files older than a specified number of days.
-
+    Cleans the input dataset by handling missing values and normalizing data.
     Parameters:
-    log_dir: str - Directory containing log files.
-    days_old: int - Number of days.
-
+        df : pd.DataFrame : Input data
     Returns:
-    None
+        pd.DataFrame : Cleaned data
     """
-    import time
-    now = time.time()
-    cutoff = now - (days_old * 86400)
+    # Fill missing values with mean
+    df.fillna(df.mean(), inplace=True)
+    
+    # Normalize columns for uniform data distribution
+    for column in df.select_dtypes(include=[float, int]).columns:
+        df[column] = (df[column] - df[column].mean()) / df[column].std()
+    
+    return df
 
-    for filename in os.listdir(log_dir):
-        file_path = os.path.join(log_dir, filename)
-        if os.path.isfile(file_path):
-            if os.stat(file_path).st_mtime < cutoff:
-                os.remove(file_path)
-                print(f"Deleted old log file: {file_path}")
-
-if __name__ == '__main__':
-    clean_old_logs('logs/', 30)
+# Example usage
+# df = pd.read_csv("data.csv")
+# df_cleaned = clean_data(df)
+# df_cleaned.to_csv("data_cleaned.csv", index=False)

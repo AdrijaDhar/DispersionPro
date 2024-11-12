@@ -1,0 +1,11 @@
+test_name: GaussianPlumeTest1
+Qm: 10.0
+u: 5.0
+model_type: plume
+x_max: 200.0
+y_max: 100.0
+z: 2.0
+additional_inputs: {'H': 25.0, 'stability_class': 'D', 'toxicity_threshold': 0.5}
+modify_terrain: True
+adjust_for_weather: False
+visualize_toxicity: True

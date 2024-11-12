@@ -1,43 +1,16 @@
 # visualizations/terrain_integration.py
 
 import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from osgeo import gdal
 
-def integrate_terrain(elevation_data_path):
+def modify_dispersion_for_terrain(concentration_data, elevation_data):
     """
-    Reads terrain elevation data and returns arrays for plotting.
-
+    Modify concentration data based on terrain elevation.
     Parameters:
-    elevation_data_path: str - Path to the DEM file.
-
+        concentration_data : np.array : Original concentration values
+        elevation_data : np.array : Elevation data (e.g., from a digital elevation model)
     Returns:
-    X, Y, Z: np.array - Arrays representing terrain elevation.
+        np.array : Adjusted concentration data
     """
-    ds = gdal.Open(elevation_data_path)
-    band = ds.GetRasterBand(1)
-    elevation = band.ReadAsArray()
-    xsize = ds.RasterXSize
-    ysize = ds.RasterYSize
-    x = np.linspace(0, xsize, xsize)
-    y = np.linspace(0, ysize, ysize)
-    X, Y = np.meshgrid(x, y)
-    Z = elevation
-    return X, Y, Z
-
-def plot_terrain(X, Y, Z):
-    """
-    Plots the terrain elevation data.
-
-    Parameters:
-    X, Y, Z: np.array - Terrain data arrays.
-
-    Returns:
-    fig: matplotlib.figure.Figure - The generated terrain figure.
-    """
-    fig = plt.figure(figsize=(10, 7))
-    ax = fig.add_subplot(111, projection='3d')
-    ax.plot_surface(X, Y, Z, cmap='terrain')
-    ax.set_title('Terrain Elevation')
-    return fig
+    # Simple model: reduce concentration based on elevation
+    adjusted_concentration = concentration_data * np.exp(-0.001 * elevation_data)
+    return adjusted_concentration

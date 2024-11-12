@@ -1,0 +1,11 @@
+test_name: GaussianPuffTest1
+Qm: 8.0
+u: 0.0
+model_type: puff
+x_max: 150.0
+y_max: 100.0
+z: 1.5
+additional_inputs: {'t': 10.0}
+modify_terrain: False
+adjust_for_weather: False
+visualize_toxicity: False

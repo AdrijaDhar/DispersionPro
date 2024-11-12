@@ -1,0 +1,11 @@
+test_name: CFDTest1
+Qm: 12.0
+u: 4.0
+model_type: cfd
+x_max: 200.0
+y_max: 100.0
+z: 2.0
+additional_inputs: {'D': 0.05, 't': 20.0}
+modify_terrain: False
+adjust_for_weather: True
+visualize_toxicity: False

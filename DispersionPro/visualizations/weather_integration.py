@@ -1,30 +1,17 @@
 # visualizations/weather_integration.py
 
-import requests
+import numpy as np
 
-def get_weather_data(api_key, location):
+def adjust_dispersion_for_weather(concentration_data, wind_speed, wind_direction):
     """
-    Fetches weather data from OpenWeatherMap API.
-
+    Adjust dispersion data based on weather (wind speed and direction).
     Parameters:
-    api_key: str - API key for OpenWeatherMap.
-    location: str - Location query (e.g., city name).
-
+        concentration_data : np.array : Original concentration values
+        wind_speed : float : Current wind speed
+        wind_direction : float : Wind direction in degrees
     Returns:
-    weather_data: dict - Dictionary containing weather information.
+        np.array : Adjusted concentration data
     """
-    url = f"http://api.openweathermap.org/data/2.5/weather?q={location}&appid={api_key}"
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        weather_data = {
-            'wind_speed': data['wind']['speed'],
-            'wind_direction': data['wind']['deg'],
-            'temperature': data['main']['temp'],
-            'pressure': data['main']['pressure'],
-            'humidity': data['main']['humidity']
-        }
-        return weather_data
-    else:
-        print("Failed to retrieve weather data.")
-        return None
+    direction_factor = np.cos(np.radians(wind_direction))  # Simplified adjustment
+    adjusted_concentration = concentration_data * (1 + wind_speed * 0.1 * direction_factor)
+    return adjusted_concentration

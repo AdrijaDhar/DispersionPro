@@ -1,23 +1,21 @@
+# core/gaussian_puff.py
+
 import numpy as np
 
-def gaussian_puff(Q, t, x, y, z, u, sigma_x, sigma_y, sigma_z):
-    """
-    Calculate the concentration using the Gaussian Puff Model.
+class GaussianPuffModel:
+    @staticmethod
+    def puff_no_wind(Qm, K, r, t):
+        """Case 2: Puff with No Wind"""
+        return (Qm / (8 * (np.pi * K * t)**1.5)) * np.exp(-r**2 / (4 * K * t))
 
-    Parameters:
-    Q : float - Total mass released (g)
-    t : float - Time after release (s)
-    x, y, z : float - Coordinates of the point (m)
-    u : float - Wind speed (m/s)
-    sigma_x, sigma_y, sigma_z : float - Dispersion coefficients (m)
+    @staticmethod
+    def puff_with_wind(Qm, u, Kx, Ky, Kz, x, y, z, t):
+        """Case 5: Puff with Wind"""
+        return (Qm / ((8 * np.pi * t)**1.5 * np.sqrt(Kx * Ky * Kz))) * \
+               np.exp(-((x - u * t)**2 / (4 * Kx * t) + y**2 / (4 * Ky * t) + z**2 / (4 * Kz * t)))
 
-    Returns:
-    C : float - Pollutant concentration at point (x, y, z)
-    """
-    exponent_x = -(x - u * t)**2 / (2 * sigma_x**2)
-    exponent_y = -(y**2) / (2 * sigma_y**2)
-    exponent_z = -(z**2) / (2 * sigma_z**2)
-    
-    C = (Q / (2 * np.pi * sigma_x * sigma_y * sigma_z)) * np.exp(exponent_x) * np.exp(exponent_y) * np.exp(exponent_z)
-    
-    return C
+    @staticmethod
+    def puff_no_wind_ground(Qm, Kx, Ky, Kz, x, y, z, t):
+        """Case 6: Puff with No Wind and with Source on Ground"""
+        return (Qm / ((8 * np.pi * t)**1.5 * np.sqrt(Kx * Ky * Kz))) * \
+               np.exp(-((x**2 / (4 * Kx * t)) + (y**2 / (4 * Ky * t)) + (z**2 / (4 * Kz * t))))

@@ -1,18 +1,29 @@
-# ui/3d_visualization.py
+# visualizations/3d_visualization.py
 
-from flask import render_template
-from DispersionPro.visualizations.real_time_3d_visualizer import generate_3d_visualization
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from core.gaussian_puff import GaussianPuffModel
 
-def display_3d_visualization(params):
+def visualize_3d_dispersion(Qm, u, Kx, Ky, Kz, time):
     """
-    Generates and displays a 3D visualization based on input parameters.
-
+    Real-time 3D visualization for puff with wind.
     Parameters:
-    params: dict - Dictionary of input parameters.
-
-    Returns:
-    Rendered HTML page with embedded 3D plot.
+        Qm : float : Mass release rate
+        u : float : Wind speed
+        Kx, Ky, Kz : float : Eddy diffusivities in x, y, z directions
+        time : float : Time after release
     """
-    fig = generate_3d_visualization(**params)
-    graph_json = fig.to_json()
-    return render_template('3d_visualization.html', graph_json=graph_json)
+    x = np.linspace(-50, 50, 100)
+    y = np.linspace(-50, 50, 100)
+    X, Y = np.meshgrid(x, y)
+    Z = GaussianPuffModel.puff_with_wind(Qm, u, Kx, Ky, Kz, X, Y, 0, time)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.plot_surface(X, Y, Z, cmap='viridis')
+    ax.set_xlabel('X Distance')
+    ax.set_ylabel('Y Distance')
+    ax.set_zlabel('Concentration')
+    plt.title("3D Dispersion Visualization")
+    plt.show()
